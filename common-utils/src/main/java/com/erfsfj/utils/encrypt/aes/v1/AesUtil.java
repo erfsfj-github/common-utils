@@ -5,6 +5,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 
 /**
@@ -26,14 +27,17 @@ public class AesUtil {
 
     public static SecretKey generateKey(String aesKey) { // 生成密钥
         KeyGenerator kgen = null;
+        SecureRandom random=null;
         SecretKeySpec sks = null;
         try {
             kgen = KeyGenerator.getInstance(ALGORITHM);
-            kgen.init(128,new SecureRandom(aesKey.getBytes()));
+            random = SecureRandom.getInstance("SHA1PRNG","SUN");
+            random.setSeed(aesKey.getBytes());
+            kgen.init(128,random);
             SecretKey secretKey = kgen.generateKey();
             byte[] enCodeFormat = secretKey.getEncoded();
-            sks = new SecretKeySpec(enCodeFormat, "AES");
-        } catch (NoSuchAlgorithmException e) {
+            sks = new SecretKeySpec(enCodeFormat, ALGORITHM);
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
             e.printStackTrace();
         }
         return sks;
