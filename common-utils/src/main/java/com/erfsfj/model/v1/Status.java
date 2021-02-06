@@ -1,4 +1,4 @@
-package com.erfsfj.model;
+package com.erfsfj.model.v1;
 
 /**
  * <p>
